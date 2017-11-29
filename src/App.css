@@ -1,0 +1,98 @@
+/* Table styles */
+.rowSelected {
+    background: #EBF5FF !important;
+}
+/* #3c3c3c; */
+
+.InfoTable thead,
+.InfoTable tbody {
+    display: block;
+}
+
+.InfoTable thead {
+    height: 32px;
+}
+
+.InfoTable thead tr th[data-sort="true"]:hover {
+    cursor: pointer;
+    transition: all .5s ease-in;
+}
+.InfoTable thead tr th{
+    /* border-bottom: none; */
+    border-bottom: 1px solid #ddd;
+}
+
+.InfoTable th {
+    text-decoration: none;
+}
+
+.InfoTable tbody {
+    overflow: auto;
+}
+
+.InfoTable tbody tr td{
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+}
+
+.InfoTable tbody tr:hover{
+    cursor: pointer;
+}
+
+.InfoTable thead th::after {
+    margin-left: 2px;
+    font-family: FontAwesome;
+    content: "\f0d8 \f0d7";
+    color: #212121;
+    opacity: 0;
+}
+
+.InfoTable thead th[data-sort-column=""][data-sort="true"]:hover::after {
+    opacity: 1;
+    -webkit-transition: opacity .3s;
+    transition: opacity .3s;
+}
+
+.InfoTable th {
+    padding: 5px;
+}
+
+.InfoTable td {
+    padding: 5px;
+    box-sizing: border-box;
+}
+.InfoTable th, .InfoTable td {
+    text-align: left;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+.InfoTable tfoot{
+    display: block;
+}
+
+.InfoTable tfoot tr td{
+    border-top: none;
+}
+
+.InfoTable-fixed {
+    table-layout: fixed;
+    border-collapse: collapse;
+    display: block;
+    width: 100%;
+}
+
+.InfoTable-fixed tr {
+    display: block;
+}
+
+.InfoTable .inputFilter {
+    width: 250px;
+    transition: width .5s ease-out;
+}
+
+.InfoTable .inputFilter:focus {
+    width: 350px;
+    transition: width .5s ease-in;
+}
+
