@@ -35,6 +35,8 @@ class DefaultPagination extends React.Component {
         }
 
         this.handleOnChangePage = this.handleOnChangePage.bind(this);
+        this.handlePreviousClick = this.handlePreviousClick.bind(this);
+        this.handleNextClick = this.handleNextClick.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -46,19 +48,35 @@ class DefaultPagination extends React.Component {
         this.props.onChangeGrid(event, { currentPage });
     }
 
+    handleNextClick(event) {
+        if (this.props.currentPage < this.state.totalPages) {
+            this.props.onChangeGrid(event, {
+                currentPage: this.props.currentPage + 1
+            });
+        }
+    }
+    
+    handlePreviousClick(event) {
+        if (this.props.currentPage > 1) {
+            this.props.onChangeGrid(event, {
+                currentPage: this.props.currentPage - 1
+            });
+        }
+    }
+
     render() {
         const { totalCount, itemsPerPage, currentPage } = this.props;
         const Pages = getPages(totalCount, itemsPerPage, currentPage, this.handleOnChangePage);
         return (
             <nav aria-label="Page navigation">
                 <ul className="pagination">
-                    <li>
+                    <li onClick={this.handlePreviousClick}>
                         <a aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
                     {Pages}
-                    <li>
+                    <li onClick={this.handleNextClick}>
                         <a aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>

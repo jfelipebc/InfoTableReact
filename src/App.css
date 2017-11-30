@@ -69,6 +69,11 @@
 
 .InfoTable tfoot{
     display: block;
+    height: 64px;
+}
+
+.InfoTable tfoot .pagination {
+    margin: 10px 0;
 }
 
 .InfoTable tfoot tr td{
