@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-const Cell = ({columnIndex, cellTooltip, columnWidth, children}) => 
+const Cell = ({columnIndex, cellTooltip, columnWidth, children, align }) => 
     (<td
         key={columnIndex}
         title={cellTooltip}
-        style={{ width: `${columnWidth}%` }}
+        style={{ width: columnWidth, textAlign: align }}
     >
         {children}
     </td>);
@@ -15,28 +15,43 @@ class DefaultRow extends React.Component {
 
         this.onHandleRowClick = this.onHandleRowClick.bind(this);
     }
+    
     onHandleRowClick(event, row, rowId) {
-        this.props.onRowClick(event, row, rowId);
+        if (event.target.tagName === 'TD') {
+            this.props.onRowClick(event, row, rowId);
+        }
     }
 
-    getCells(row, columns, columnWidth) {
+    getCells(row, columns) {
         return columns
-            .filter(column => column.isVisible)
             .map((column, columnIndex) => {
-                const cell = (typeof column.render === "function")
-                    ? column.render(this.props, column, columnIndex)
-                    : row[column.columnName];
+                let dataValue = row[column.columnName];
+                let cellTooltip = '';
+                let rowAlign = column.align || 'center';
+                if (typeof column.formatter === 'function') {
+                    dataValue = column.formatter(dataValue);
+                    cellTooltip = dataValue
+                } else if (typeof row[column.columnName] === "string" || typeof row[column.columnName] === "number") {
+                    cellTooltip = dataValue;
+                } else {
+                    cellTooltip = column.columnName
+                }
 
-                const cellTooltip = (typeof row[column.columnName] === "string" ||
-                    typeof row[column.columnName] === "number")
-                        ? row[column.columnName]
-                        : column.columnName;
+                if (typeof row[column.columnName] === "number") {
+                    rowAlign = 'right';
+                }
+                
+                const cell = (typeof column.render === "function")
+                    ? column.render(this.props, column, columnIndex, dataValue)
+                    : dataValue;
+
                     return (
                         <Cell
                             key={`${column.columnName}'$$'${columnIndex}`}
                             columnIndex={columnIndex}
                             cellTooltip={cellTooltip}
-                            columnWidth={columnWidth}
+                            columnWidth={column.columnWidth}
+                            align={rowAlign}
                         >
                             {cell}
                         </Cell>
@@ -45,17 +60,15 @@ class DefaultRow extends React.Component {
     }
 
     render() {
-        const { columns, row, rowId, rowSelectedClass } = this.props;
-        const columnsVisible = columns.filter(column => column.isVisible)
-        const columnWidth = 100 / columnsVisible.length;
+        const { columns, row, rowId, rowSelectedClass, rowWidth } = this.props;
         return (
             <tr 
-                valign="middle"
                 onClick={event => this.onHandleRowClick(event, row, rowId)} 
                 className={rowSelectedClass}
+                style={{ width: rowWidth }}
             >
                 {
-                    this.getCells(row, columnsVisible, columnWidth)
+                    this.getCells(row, columns)
                 }
             </tr>
         );

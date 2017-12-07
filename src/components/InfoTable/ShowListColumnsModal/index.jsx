@@ -41,7 +41,9 @@ class ShowListColumnsModal extends React.Component {
                     <div className='table-responsive'>
                         <ul>
                             {
-                                columns.map((column, index) =>
+                                columns
+                                    .filter(column => column.displayName && column.displayName !== '')
+                                    .map((column, index) =>
                                     <li
                                         key={`${column.columnName}$$${index}`}
                                         className="list-group-item col-md-4"
@@ -49,7 +51,7 @@ class ShowListColumnsModal extends React.Component {
                                     >
                                         <Checkbox
                                             label={column.displayName}
-                                            value={column.isVisible}
+                                            value={column.isVisible !== false}
                                             onChange={e => this.handleChangeCheckbox(e, column)}
                                         />
                                     </li>

@@ -5,7 +5,7 @@ import ShowListColumnsModal from '../ShowListColumnsModal';
 
 class InfoTableHeader extends React.Component {
     render() {
-        const { customFilterComponent, customBulkActions, customHeader } = this.props;
+        const { customFilterComponent, customBulkActions, customHeader, showFilter } = this.props;
         if (customHeader) return customHeader;
         const Filter = customFilterComponent ? customFilterComponent : DefaultHeaderFilter;
         const Actions = customBulkActions ? customBulkActions : BulkActions;
@@ -20,7 +20,7 @@ class InfoTableHeader extends React.Component {
                     {...this.props}
                     id="showListColumnsModal"
                 />
-                <Filter { ...this.props } />
+                { showFilter ? <Filter { ...this.props } /> : '' }
                 <Actions { ...this.props } />
             </div>
         )

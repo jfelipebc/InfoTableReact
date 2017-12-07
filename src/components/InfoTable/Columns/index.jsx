@@ -11,7 +11,7 @@ const getSortIcon = direction => {
     }
 };
 
-class InfoTableHeader extends React.Component {
+class Columns extends React.Component {
     constructor(...args) {
         super(...args);
         this.onHandleSortClick = this.onHandleSortClick.bind(this);
@@ -27,6 +27,7 @@ class InfoTableHeader extends React.Component {
             }
             return (
             <th
+                style={{ width: column.columnWidth }}
                 key={`${column}$$${indexColumn}`}
                 data-sort-column={this.props.sortColumn || ""}
                 data-sort={column.isSorting || false}
@@ -61,17 +62,9 @@ class InfoTableHeader extends React.Component {
     }
 
     render() {
-        const { columns, tableHeaderClassName } = this.props;
-        const cols = this.getColumns(columns);
-        return (
-            <thead
-                ref={tableHeader => {this.tableHeaderRef = tableHeader;}}
-                className={tableHeaderClassName}
-            >
-                <tr>{cols}</tr>
-            </thead>
-        );
+        const columns = this.getColumns(this.props.columns);
+        return (<tr style={{ width: this.props.rowWidth }}>{columns}</tr>);
     }
 }
 
-export default InfoTableHeader
+export default Columns

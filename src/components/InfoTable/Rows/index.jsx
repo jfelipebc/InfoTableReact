@@ -1,7 +1,7 @@
 import React from 'react';
 import InfoTableRow from '../InfoTableRow';
 
-class InfoTableRows extends React.Component {
+class Rows extends React.Component {
     getRows() {
         const {
             data,
@@ -21,23 +21,9 @@ class InfoTableRows extends React.Component {
         });
     }
     render() {
-        const {
-            tableHeight,
-            tableBodyClassName,
-        } = this.props;
-
-        const rows = this.getRows();
-
-        if  (tableHeight !== '') {
-            const customStyle = { overflowY: "scroll", height: tableHeight }
-            return (<tbody style={customStyle}>{rows}</tbody>);
-        }
-
-        return (
-            <tbody className={tableBodyClassName}>{rows}</tbody>
-        );
+        return this.getRows();
     }
 }
 
-export default InfoTableRows;
+export default Rows;
 

@@ -39,7 +39,8 @@ class DefaultHeaderFilter extends React.Component {
                     type="text"
                     value={this.state.search}
                     ref={inputSearch => this.inputSearch = inputSearch}
-                    className='form-control input-sm inputFilter'
+                    style={{ width: '350px' }}
+                    className='form-control input-sm InfoTable-inputSearch'
                     placeholder={filterPlaceholder}
                     onChange={this.onHandleChangeSearch}
                 />

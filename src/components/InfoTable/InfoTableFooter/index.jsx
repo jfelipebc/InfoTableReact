@@ -3,18 +3,13 @@ import DefaultFooter from '../DefaultFooter';
 
 class InfoTableFooter extends React.Component {
     render() {
-        const { customFooter, showFooter } = this.props; 
-        if (!showFooter) return null;
-
+        const { customFooter } = this.props; 
         const Footer = customFooter ? customFooter : DefaultFooter;
         return (
-            <tfoot>
-                <tr>
-                    <Footer {...this.props} />
-                </tr>
-            </tfoot>
+            <tr>
+                <Footer {...this.props} />
+            </tr>
         )
     }
 }
-//{ showPagination ? <Pagination {...this.props} /> : null }
 export default InfoTableFooter;

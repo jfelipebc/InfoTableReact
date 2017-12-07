@@ -1,26 +1,60 @@
 import React from 'react';
 import $ from 'jquery';
-import InfoTableRows from './InfoTableRows';
-import InfoTableHeaderColumn from './InfoTableHeaderColumn';
-import InfoTableHeader from './InfoTableHeader';
+import Columns from './Columns';
 import InfoTableFooter from './InfoTableFooter';
+import InfoTableHeader from './InfoTableHeader';
+import Rows from './Rows';
 
+const SYMBOLS = {
+    PERCENTAGE: '%',
+    PIXEL: 'px'
+};
 class InfoTable extends React.Component {
     constructor(props) {
         super(props);
-        this.onResize = this.onResize.bind(this);
-    }
+        this.state = {
+            columns: [],
+            rowWidth: window.innerWidth
+        }
 
-    componentWillMount() {
-        window.addEventListener("resize", this.onResize);
+        this.containerResized = (e) => {
+            const panelHeight = this.props.showHeader ? this.panelHeader.clientHeight : 0;
+            const footerHeight = this.props.showFooter ? this.footer.clientHeight : 0;
+            const height = window.innerHeight - (this.header.clientHeight + panelHeight + footerHeight + 20);
+
+            if (this.props.tableHeight && this.props.tableHeight < height) {
+                $(this.body).height(this.props.tableHeight);
+            } else {
+                $(this.body).height(height);
+            }
+        };
+
+        window.addEventListener('resize', this.containerResized);
     }
 
     componentDidMount() {
-        this.redraw();
+        this.containerResized();
+        const columns = this.redraw(this.props.columns.slice());
+        const rowWidth = columns.reduce((total, column) => {
+            total += parseInt(column.columnWidth.replace(SYMBOLS.PIXEL, '').replace(SYMBOLS.PERCENTAGE, ''), 0);
+            return total;
+        }, 0)
+        this.setState({ columns, rowWidth, bodyHeight: this.props.tableHeight });
     }
 
-    componentDidUpdate() {
-        this.redraw();
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.columns && nextProps.columns.length > 0) {
+            const columns = this.redraw(nextProps.columns.slice());
+            const rowWidth = columns.reduce((total, column) => {
+                total += parseInt(column.columnWidth.replace(SYMBOLS.PIXEL, '').replace(SYMBOLS.PERCENTAGE, ''), 0);
+                return total;
+            }, 0)
+            this.setState({ columns, rowWidth });
+        }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.resize);
     }
 
     sortDataByColumn(data) {
@@ -85,74 +119,126 @@ class InfoTable extends React.Component {
         return data;
     }
 
-    onResize() {
-        this.redraw();
+    redraw(columns) {
+        const filterColumns = columns.filter(column => column.isVisible !== false);
+        const sw = $(this.tableRef).find('table>tbody').prevObject.prop('clientWidth') || window.innerWidth;
+        let k = 1;
+        let symbol = SYMBOLS.PIXEL;
+        let width = filterColumns.reduce((totalWidth, column) => {
+            const columnWidth = column.columnWidth ? column.columnWidth : 120;
+            totalWidth += columnWidth;
+            return totalWidth;
+        }, 0);
+
+        if (width < sw) {
+            k = 100 / width;
+            width = 100;
+            symbol = SYMBOLS.PERCENTAGE;
+        }
+
+        const newColumns = filterColumns.map(column => ({...column, columnWidth: (column.columnWidth || 120) * k + symbol }));
+        return newColumns;
     }
 
-    redraw() {
-        const cells = $(this.tableRef)
-            .find("tbody tr:first")
-            .children();
-
-        const colsWidth = cells
-            .map(function() { return $(this).width()})
-            .get();
-    
-        $(this.tableRef)
-            .find("thead tr")
-            .children()
-            .each(function(i, v) {
-                $(v).width(colsWidth[i]);
-            });
+    getHeaderHeight() {
+        return this.header.clientHeight;
     }
 
     render() {
         const {
-            columns,
             tableClassName,
             isHeaderFixed,
+            showHeader,
+            showFooter,
         } = this.props;
 
         if (this.props.data.length < this.props.itemsPerPage && this.props.currentPage > 1) {
             this.props.onChangeGrid(null, { currentPage: 1 });
         }
 
+        const { columns, rowWidth } = this.state;
         const data = this.props.data ? this.getResponseData() : null;
         const resultsOnPage = data && data.length <= this.props.itemsPerPage ? data.length : this.props.itemsPerPage;
-        const columnsVisible = columns.filter(column => column.isVisible);
-        let tableClassFixedHeader =  '';
-        let tableHeight = this.props.tableHeight;
-        if (isHeaderFixed) {
-            tableClassFixedHeader = 'InfoTable-fixed';
-            tableHeight = this.props.tableHeight || 250;
-        }
+        const tableClassFixedHeader = isHeaderFixed ? 'InfoTable-fixed' : '';
+
         return (
-            <div className="InfoTable">
-                
-                <InfoTableHeader {...this.props} />
+            <div>
+                <div ref={node => this.panelHeader = node }>
+                    { showHeader ? <InfoTableHeader {...this.props} /> : '' }
+                </div>
                 <table
                     ref={table => {this.tableRef = table;}}
                     className={`${tableClassName} ${tableClassFixedHeader}`}
                 >
-                    <InfoTableHeaderColumn
-                        {...this.props}
-                        columns={columnsVisible}
-                    />
-                    <InfoTableRows
-                        {...this.props}
-                        data={data}
-                        tableHeight={tableHeight}
-                    />
-                    <InfoTableFooter
-                        {...this.props}
-                        totalCount={this.props.data.length}
-                        currentPage={parseInt(this.props.currentPage, 0)}
-                        resultsOnPage={resultsOnPage}
-                    />
+                    <thead
+                        ref={node => {this.header = node;}}
+                        style={{ width: rowWidth + 'px'}}
+                    >
+                        <Columns
+                            {...this.props}
+                            columns={columns}
+                            rowWidth={rowWidth + 'px'}
+                        />
+                    </thead>
+                    <tbody
+                        ref={(node) => { this.body = node; }}
+                        style={{ width: rowWidth + 'px'}}
+                    >
+                        <Rows 
+                            {...this.props}
+                            data={data}
+                            columns={columns}
+                            rowWidth={rowWidth + 'px'}
+                        />
+                    </tbody>
+                    {
+                        showFooter ? 
+                            <tfoot ref={node => this.footer = node }>
+                                <InfoTableFooter
+                                    {...this.props}
+                                    totalCount={this.props.data.length}
+                                    currentPage={parseInt(this.props.currentPage, 0)}
+                                    resultsOnPage={resultsOnPage}
+                                />
+                            </tfoot>
+                        : null
+                    }
                 </table>
             </div>
         );
     }
+}
+
+InfoTable.defaultProps = {
+    columns: [],
+    customBulkActions: null,
+    customHeader: null,
+    customFilterComponent: null,
+    customPaginationComponent: null,
+    customRow: null,
+    data: [],
+    filterPlaceholder: 'Filtrar datos',
+    isHeaderFixed: true,
+    onChangeGrid: () => {},
+    onCustomClearFilter: null,
+    onCustomFilter: null,
+    onCustomSort: null,
+    onExportClick: () => {},
+    onRowClick: () => {},
+    currentPage: 1, 
+    itemsPerPage: 10,
+    modalColumnsTitle: "Seleccione columnas",
+    rowSelected: {},
+    rowSelectedClassName: 'rowSelected',
+    showFilter: false,
+    showHeader: false,
+    showBulkActions: false,
+    showListColumns: false,
+    showPagination: false,
+    tableBodyClassName: '',
+    tableClassName: '',
+    tableHeaderClassName: '',
+    tableHeight: null,
 }
 
 export default InfoTable;
