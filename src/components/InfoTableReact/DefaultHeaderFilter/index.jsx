@@ -18,12 +18,20 @@ class DefaultHeaderFilter extends React.Component {
     
 
     onHandleSearchClick(event) {
-        this.props.onChangeGrid(event, { search: this.state.search });
+        if (this.props.onCustomFilter) {
+            this.props.onCustomFilter(event, this.state.search);
+        } else {
+            this.props.onChangeGrid(event, { search: this.state.search });
+        }
     }
 
     onHandleClearClick(event) {
         this.setState({ search: '' });
-        this.props.onChangeGrid(event, { search: '' });
+        if (this.props.onCustomClearFilter) {
+            this.props.onCustomClearFilter(event);
+        } else {
+            this.props.onChangeGrid(event, { search: '' });
+        }
     }
 
     onHandleChangeSearch(event) {

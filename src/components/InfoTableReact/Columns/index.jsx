@@ -47,18 +47,23 @@ class Columns extends React.Component {
         let sortDirection = null;
         if (column.columnName === this.props.sortColumn) {
             if (this.props.sortDirection === "ASC") {
-            sortDirection = "DESC";
+                sortDirection = "DESC";
             } else {
-            sortDirection = "ASC";
+                sortDirection = "ASC";
             }
         } else {
             sortDirection = "ASC";
         }
+
+        if (this.props.onCustomSort) {
+            this.props.onCustomSort(event, sortDirection, column.columnName, indexColumn);
+        } else {
+            this.props.onChangeGrid(event, {
+                sortColumn: column.columnName,
+                sortDirection
+            });
+        }
     
-        this.props.onChangeGrid(event, {
-            sortColumn: column.columnName,
-            sortDirection
-        });
     }
 
     render() {

@@ -17,7 +17,7 @@ class DefaultRow extends React.Component {
     }
     
     onHandleRowClick(event, row, rowId) {
-        if (event.target.tagName === 'TD') {
+        if (event.target.tagName === 'TR' || event.target.tagName === 'TD') {
             this.props.onRowClick(event, row, rowId);
         }
     }
@@ -60,10 +60,10 @@ class DefaultRow extends React.Component {
     }
 
     render() {
-        const { columns, row, rowId, rowSelectedClass, rowWidth } = this.props;
+        const { columns, row, rowIndex, rowSelectedClass, rowWidth } = this.props;
         return (
             <tr 
-                onClick={event => this.onHandleRowClick(event, row, rowId)} 
+                onClick={event => this.onHandleRowClick(event, row, rowIndex)} 
                 className={rowSelectedClass}
                 style={{ width: rowWidth }}
             >
@@ -86,7 +86,7 @@ DefaultRow.propTypes = {
         render: PropTypes.func,
     })).isRequired,
     row: PropTypes.object.isRequired,
-    rowId: PropTypes.number.isRequired,
+    rowIndex: PropTypes.number.isRequired,
     rowClassName: PropTypes.string,
     rowSelectedClass: PropTypes.string,
 }

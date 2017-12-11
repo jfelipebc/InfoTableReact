@@ -1,7 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
 import { Modal, ModalBody, ModalHeader } from '../../Modal';
-import Checkbox from '../../Checkbox';
+import Checkbox from '../Checkbox';
 
 class ShowListColumnsModal extends React.Component {
     constructor(props) { 

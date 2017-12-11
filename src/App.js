@@ -1,42 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import * as data from './data/MOCK_DATA';
-import { Modal, ModalBody } from './components/Modal';
-import InfoTable from './components/InfoTable';
-
-const FormModal = () => (
-    <Modal
-        id='formModal'
-        modalSize="modal-sm"
-        width="40%"
-        reference={(node) => { this.modal = node; }}
-    >
-        <ModalBody>
-            <form>
-                <div className="form-group">
-                    <label htmlFor="exampleInputEmail1">Email address</label>
-                    <input type="email" className="form-control" id="exampleInputEmail1" placeholder="Email" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="exampleInputPassword1">Password</label>
-                    <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password"/>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="exampleInputFile">File input</label>
-                    <input type="file" id="exampleInputFile" />
-                    <p className="help-block">Example block-level help text here.</p>
-                </div>
-                <div className="checkbox">
-                    <label>
-                        <input type="checkbox"/> Check me out
-                    </label>
-                </div>
-                <button type="submit" className="btn btn-default">Submit</button>
-            </form>
-        </ModalBody>
-    </Modal>
-)
-
+import InfoTable from './components/InfoTableReact';
 
 const columns = [
     {
@@ -60,7 +25,10 @@ const columns = [
     },
     {
         columnName: 'firstName',
-        displayName: 'Nombre'
+        displayName: 'Nombre',
+        render: (props, column, indexColumn, value) => {
+            return (<a onClick={(e => console.log(e, value))}>{value}</a>);
+        }
     },
     {
         columnName: 'lastName',
@@ -96,6 +64,7 @@ const columns = [
     {
         columnName: 'active',
         displayName: 'Activo',
+        isSorting: true,
         render: (props, column, indexColumn, value) => {
             return value ? 'Sí' : 'No';
         }
@@ -128,28 +97,40 @@ const columns = [
         displayName: 'Token',
     }
 ]
+
 class App extends Component {
     constructor(...args) {
         super(...args);
 
         this.state = {
+            containerHeight: window.innerHeight,
             tableConfig: {
                 data: data,
                 columns: columns,
-                tableClassName: "table table-condensed table-striped table-hover InfoTable",
-                tableHeight: 600,
+                tableClassName: "table table-condensed table-striped table-hover InfoTableReact",
                 onChangeGrid: this.onChangeGrid.bind(this),
-                itemsPerPage: 100
             }
         };
+
+        this.containerResized = (e) => {
+            const panelHeight = this.infotable.getPanelHeaderHeight();
+            const footerHeight = this.infotable.getTableFooterHeight()
+            const height = window.innerHeight - (this.infotable.getTableHeaderHeight() + panelHeight + footerHeight + 20);
+            this.setState({ containerHeight: height });
+        };
+
+        window.addEventListener('resize', this.containerResized);
     }
 
-    onRowClick(e, row, rowId) {
-        const rowSelected = { ...row, rowId };
-        this.setState({
-            tableConfig: Object.assign({}, { ...this.state.tableConfig }, { rowSelected })
-        });
+    componentDidMount = () => {
+        this.containerResized();
     }
+
+    componentWillUnmount = () => {
+        window.removeEventListener('resize', this.containerResized);
+    }
+    
+    
 
     onChangeGrid(event, data) {
         const tableConfig = this.state.tableConfig;
@@ -160,17 +141,12 @@ class App extends Component {
 
     render() {
         return (
-            <div id="TableContainer">
-                <FormModal />
+            <div id="TableContainer" ref={node => this.container = node }>
                 <InfoTable 
                     {...this.state.tableConfig}
                     ref={node => this.infotable = node }
                     container="#TableContainer"
-                    showHeader
-                    showFilter
-                    showListColumns
-                    showFooter
-                    showPagination
+                    tableHeight={this.state.containerHeight}
                 />
             </div>
         );
@@ -180,7 +156,7 @@ class App extends Component {
 export default App;
 
 
-/*Column properties
+/* Column properties
 align: type: string default: 'center',
 columnWidth: type number default: 120
 displayName: type: string default: '',
@@ -190,5 +166,37 @@ isSorting: type: bool default: false
 render: type: function([props, column, indexColumn, value]), default: null,
 formatter: type: function([props, column, indexColumn, value]), default: null,
 isKey: type: bool default: false */
+
+/* 
+InfoTable properties
+    columns: [],
+    customBulkActions: null,
+    customHeader: null,
+    customFilterComponent: null,
+    customPaginationComponent: null,
+    customRow: null,
+    data: [],
+    filterPlaceholder: 'Filtrar datos',
+    isHeaderFixed: true,
+    onChangeGrid: function([event, data]){},
+    onCustomClearFilter: function(event), default: null,
+    onCustomFilter: function([event, filterText]), default: null,
+    onCustomSort: function([event, sortDirection, columnName, columnIndex]), default: null,
+    onRowClick: function([event, row, rowIndex]) => {}, default: null
+    currentPage: 1, 
+    itemsPerPage: 10,
+    modalColumnsTitle: "Seleccione columnas",
+    rowSelected: {},
+    rowSelectedClassName: 'rowSelected',
+    showFilter: false,
+    showHeader: false,
+    showBulkActions: false,
+    showListColumns: false,
+    showPagination: false,
+    tableBodyClassName: '',
+    tableClassName: '',
+    tableHeaderClassName: '',
+    tableHeight: null,
+*/
 
 

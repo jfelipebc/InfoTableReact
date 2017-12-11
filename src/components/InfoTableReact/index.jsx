@@ -9,7 +9,7 @@ const SYMBOLS = {
     PERCENTAGE: '%',
     PIXEL: 'px'
 };
-class InfoTable extends React.Component {
+class InfoTableReact extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -17,44 +17,28 @@ class InfoTable extends React.Component {
             rowWidth: window.innerWidth
         }
 
-        this.containerResized = (e) => {
-            const panelHeight = this.props.showHeader && this.panelHeader ? this.panelHeader.clientHeight : 0;
-            const footerHeight = this.props.showFooter && this.footer ? this.footer.clientHeight : 0;
-            const height = window.innerHeight - (this.header.clientHeight + panelHeight + footerHeight + 20);
-
-            if (this.props.tableHeight && this.props.tableHeight < height) {
-                $(this.body).height(this.props.tableHeight);
-            } else {
-                $(this.body).height(height);
-            }
-        };
-
-        window.addEventListener('resize', this.containerResized);
+        if (this.props.tableHeight) {
+            $(this.body).height(this.props.tableHeight);
+        }
     }
 
     componentDidMount() {
-        this.containerResized();
-        const columns = this.redraw(this.props.columns.slice());
-        const rowWidth = columns.reduce((total, column) => {
-            total += parseInt(column.columnWidth.replace(SYMBOLS.PIXEL, '').replace(SYMBOLS.PERCENTAGE, ''), 0);
-            return total;
-        }, 0)
-        this.setState({ columns, rowWidth, bodyHeight: this.props.tableHeight });
+        if (this.props.tableHeight) {
+            $(this.body).height(this.props.tableHeight);
+        }
+        const { newColumns, width }= this.redraw(this.props.columns.slice());
+        this.setState({ columns: newColumns, rowWidth: width });
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.columns && nextProps.columns.length > 0) {
-            const columns = this.redraw(nextProps.columns.slice());
-            const rowWidth = columns.reduce((total, column) => {
-                total += parseInt(column.columnWidth.replace(SYMBOLS.PIXEL, '').replace(SYMBOLS.PERCENTAGE, ''), 0);
-                return total;
-            }, 0)
-            this.setState({ columns, rowWidth });
+            const { newColumns, width } = this.redraw(nextProps.columns.slice());
+            this.setState({ columns: newColumns, rowWidth: width });
         }
-    }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.resize);
+        if (nextProps.tableHeight !== this.props.tableHeight) {
+            $(this.body).height(nextProps.tableHeight);
+        }
     }
 
     sortDataByColumn(data) {
@@ -140,11 +124,19 @@ class InfoTable extends React.Component {
         }
 
         const newColumns = filterColumns.map(column => ({...column, columnWidth: (column.columnWidth || 120) * k + symbol }));
-        return newColumns;
+        return { newColumns, width: `${width + symbol}` };
     }
 
-    getHeaderHeight() {
-        return this.header.clientHeight;
+    getPanelHeaderHeight() {
+        return this.props.showHeader && this.panelHeader ? this.panelHeader.clientHeight : 0;
+    }
+
+    getTableHeaderHeight() {
+        return this.header.clientHeight || 0;
+    }
+
+    getTableFooterHeight() {
+        return this.props.showFooter && this.footer ? this.footer.clientHeight : 0;
     }
 
     render() {
@@ -166,9 +158,9 @@ class InfoTable extends React.Component {
 
         const filterData = this.props.data ? this.filterData(search, this.sortData(this.props.data)) : null;
         const totalItems = filterData ? filterData.length : 0; 
-        const paginationData = filterData && showPagination ? this.paginationData(currentPage, itemsPerPage, filterData) : null;
+        const paginationData = filterData && showPagination ? this.paginationData(currentPage, itemsPerPage, filterData) : filterData;
         const resultsOnPage = paginationData && paginationData.length <= itemsPerPage ? paginationData.length : itemsPerPage;
-        const tableClassFixedHeader = isHeaderFixed ? 'InfoTable-fixed' : '';
+        const tableClassFixedHeader = isHeaderFixed ? 'InfoTableReact-fixed' : '';
 
         return (
             <div>
@@ -181,23 +173,23 @@ class InfoTable extends React.Component {
                 >
                     <thead
                         ref={node => {this.header = node;}}
-                        style={{ width: rowWidth + 'px'}}
+                        style={{ width: rowWidth}}
                     >
                         <Columns
                             {...this.props}
                             columns={columns}
-                            rowWidth={rowWidth + 'px'}
+                            rowWidth={rowWidth}
                         />
                     </thead>
                     <tbody
                         ref={(node) => { this.body = node; }}
-                        style={{ width: rowWidth + 'px'}}
+                        style={{ width: rowWidth}}
                     >
                         <Rows 
                             {...this.props}
                             data={paginationData}
                             columns={columns}
-                            rowWidth={rowWidth + 'px'}
+                            rowWidth={rowWidth}
                         />
                     </tbody>
                     {
@@ -218,7 +210,7 @@ class InfoTable extends React.Component {
     }
 }
 
-InfoTable.defaultProps = {
+InfoTableReact.defaultProps = {
     columns: [],
     customBulkActions: null,
     customHeader: null,
@@ -250,4 +242,4 @@ InfoTable.defaultProps = {
     tableHeight: null,
 }
 
-export default InfoTable;
+export default InfoTableReact;

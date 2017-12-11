@@ -10,10 +10,10 @@ class Rows extends React.Component {
         } = this.props;
 
         return data.map((row, rowIndex) => {
-            const rowSelect = (rowSelected.rowId === rowIndex) ? rowSelectedClassName : '';
+            const rowSelect = (rowSelected.rowIndex === rowIndex) ? rowSelectedClassName : '';
             return <InfoTableRow
                 {...this.props}
-                rowId={rowIndex}
+                rowIndex={rowIndex}
                 row={row}
                 key={rowIndex}
                 rowSelectedClass={rowSelect}

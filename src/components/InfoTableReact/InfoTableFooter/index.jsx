@@ -7,7 +7,9 @@ class InfoTableFooter extends React.Component {
         const Footer = customFooter ? customFooter : DefaultFooter;
         return (
             <tr>
-                <Footer {...this.props} />
+                <td>
+                    <Footer {...this.props} />
+                </td>
             </tr>
         )
     }
