@@ -137,7 +137,7 @@ class App extends Component {
                 data: data,
                 columns: columns,
                 tableClassName: "table table-condensed table-striped table-hover InfoTable",
-                tableHeight: 400,
+                tableHeight: 600,
                 onChangeGrid: this.onChangeGrid.bind(this),
                 itemsPerPage: 100
             }

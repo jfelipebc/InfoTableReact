@@ -18,8 +18,8 @@ class InfoTable extends React.Component {
         }
 
         this.containerResized = (e) => {
-            const panelHeight = this.props.showHeader ? this.panelHeader.clientHeight : 0;
-            const footerHeight = this.props.showFooter ? this.footer.clientHeight : 0;
+            const panelHeight = this.props.showHeader && this.panelHeader ? this.panelHeader.clientHeight : 0;
+            const footerHeight = this.props.showFooter && this.footer ? this.footer.clientHeight : 0;
             const height = window.innerHeight - (this.header.clientHeight + panelHeight + footerHeight + 20);
 
             if (this.props.tableHeight && this.props.tableHeight < height) {
@@ -108,15 +108,18 @@ class InfoTable extends React.Component {
         return filteredData;
     }
 
-    getResponseData() {
-        let data = this.sortDataByColumn(this.props.data);
-        data = this.patternMatch(this.props.search, data);
-        if (this.props.showPagination) {
-            const startIndex = (this.props.currentPage - 1) * this.props.itemsPerPage;
-            const endIndex = startIndex + this.props.itemsPerPage;
-            data = data.slice(startIndex, endIndex);
-        }
-        return data;
+    sortData(data) {
+        return this.sortDataByColumn(data);
+    }
+
+    filterData(search, data) {
+        return this.patternMatch(search, data);
+    }
+
+    paginationData(currentPage, itemsPerPage, data) {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return data.slice(startIndex, endIndex);
     }
 
     redraw(columns) {
@@ -150,15 +153,21 @@ class InfoTable extends React.Component {
             isHeaderFixed,
             showHeader,
             showFooter,
+            itemsPerPage, 
+            currentPage,
+            search,
+            showPagination
         } = this.props;
+        const { columns, rowWidth } = this.state;
 
-        if (this.props.data.length < this.props.itemsPerPage && this.props.currentPage > 1) {
+        if (this.props.data.length < itemsPerPage && currentPage > 1) {
             this.props.onChangeGrid(null, { currentPage: 1 });
         }
 
-        const { columns, rowWidth } = this.state;
-        const data = this.props.data ? this.getResponseData() : null;
-        const resultsOnPage = data && data.length <= this.props.itemsPerPage ? data.length : this.props.itemsPerPage;
+        const filterData = this.props.data ? this.filterData(search, this.sortData(this.props.data)) : null;
+        const totalItems = filterData ? filterData.length : 0; 
+        const paginationData = filterData && showPagination ? this.paginationData(currentPage, itemsPerPage, filterData) : null;
+        const resultsOnPage = paginationData && paginationData.length <= itemsPerPage ? paginationData.length : itemsPerPage;
         const tableClassFixedHeader = isHeaderFixed ? 'InfoTable-fixed' : '';
 
         return (
@@ -186,7 +195,7 @@ class InfoTable extends React.Component {
                     >
                         <Rows 
                             {...this.props}
-                            data={data}
+                            data={paginationData}
                             columns={columns}
                             rowWidth={rowWidth + 'px'}
                         />
@@ -196,8 +205,8 @@ class InfoTable extends React.Component {
                             <tfoot ref={node => this.footer = node }>
                                 <InfoTableFooter
                                     {...this.props}
-                                    totalCount={this.props.data.length}
-                                    currentPage={parseInt(this.props.currentPage, 0)}
+                                    totalCount={totalItems}
+                                    currentPage={parseInt(currentPage, 0)}
                                     resultsOnPage={resultsOnPage}
                                 />
                             </tfoot>

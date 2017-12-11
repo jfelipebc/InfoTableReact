@@ -27,10 +27,6 @@ html, body{
     background: white;
 }
 
-.InfoTable thead tr  {
-    background: aliceblue;
-}
-
 .InfoTable thead tr th {
     color: #6c6c6c;
     border-bottom: none;
