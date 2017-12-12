@@ -1,125 +1,100 @@
-html, body{
-    height: 100%;
+.InfoTableReact-rowSelected {
+  background: #ebf5ff !important;
 }
-
-.rowSelected {
-    background: #EBF5FF !important;
-}
-
 .InfoTableReact-container {
-    height: 100%;
-    width:100%;
-    left:0;
-    right:0;
-    box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
 }
-
 .InfoTableReact {
-    margin-bottom: 0;
-    border-spacing: 0;
-    background-color: transparent;
-    max-width: 100%;
+  margin-bottom: 0;
+  border-spacing: 0;
+  background-color: transparent;
+  max-width: 100%;
 }
-
-.InfoTableReact > thead {
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    background: white;
-    padding-top: 5px;
-    min-height: 48px;
+.InfoTableReact thead {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+  padding-top: 5px;
+  min-height: 48px;
 }
-
 .InfoTableReact thead tr th {
-    color: #6c6c6c;
-    border-bottom: none;
-    text-align: center;
-    font-size: 12px;
-    font-weight: bold;
-    vertical-align: top;
-    padding: 5px;
+  color: #6c6c6c;
+  border-bottom: none;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  vertical-align: top;
+  padding: 5px;
 }
-
-.InfoTableReact thead th::after {
-    margin-left: 2px;
-    font-family: FontAwesome;
-    content: "\f0d8 \f0d7";
-    color: #212121;
-    opacity: 0;
-}
-
-.InfoTableReact thead th[data-sort-column=""][data-sort="true"]:hover::after {
-    opacity: 1;
-    transition: opacity .3s;
-}
-
 .InfoTableReact thead tr th[data-sort="true"]:hover {
-    cursor: pointer;
-    transition: all .5s ease-in;
+  cursor: pointer;
+  transition: all 0.5s ease-in;
 }
-
-.InfoTableReact tbody td {
-    box-sizing: border-box;
-    display: inline-block;
-    height: 100%;
-    padding: 5px;
-    text-align: left;
+.InfoTableReact thead th::after {
+  margin-left: 2px;
+  font-family: FontAwesome;
+  content: "\f0d8 \f0d7";
+  color: #212121;
+  opacity: 0;
 }
-
+.InfoTableReact thead th[data-sort-column=""][data-sort="true"]:hover::after {
+  opacity: 1;
+  transition: opacity 0.3s;
+}
 .InfoTableReact tbody {
-    overflow: auto;
-    border-bottom: 1px solid #ddd;
+  overflow: auto;
+  border-bottom: 1px solid #ddd;
 }
-
+.InfoTableReact tbody td {
+  box-sizing: border-box;
+  display: inline-block;
+  height: 100%;
+  padding: 5px;
+  text-align: left;
+}
 .InfoTableReact tbody tr {
-    border-bottom: 1px solid #ddd;
-    display: block;
+  border-bottom: 1px solid #ddd;
+  display: block;
 }
-
-.InfoTableReact tbody tr:hover{
-    cursor: pointer;
+.InfoTableReact tbody tr:hover {
+  cursor: pointer;
 }
-
-.InfoTableReact tbody tr td{
-    border-top: none;
+.InfoTableReact tbody tr td {
+  border-top: none;
 }
-
-.InfoTableReact tfoot{
-    display: block;
-    height: 64px;
+.InfoTableReact tfoot {
+  display: block;
+  height: 64px;
 }
-
 .InfoTableReact tfoot .pagination {
-    margin: 10px 0;
+  margin: 10px 0;
 }
-
-.InfoTableReact tfoot tr td{
-    border-top: none;
+.InfoTableReact tfoot tr td {
+  border-top: none;
 }
-
 .InfoTableReact thead th,
 .InfoTableReact tbody td {
-    word-wrap:break-word;
+  word-wrap: break-word;
 }
-
 .InfoTableReact-fixed {
-    table-layout: fixed;
-    border-collapse: collapse;
-    display: block;
-    width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  display: block;
+  width: 100%;
 }
-
+.InfoTableReact-fixed tbody {
+  overflow: auto;
+}
 .InfoTableReact-fixed thead,
 .InfoTableReact-fixed tbody {
-    display: block;
+  display: block;
 }
-
-.InfoTableReact-fixed tbody {
-    overflow: auto;
-}
-
 .InfoTableReact-ellipsis {
-    overflow: hidden;
-    overflow: hidden;
-    word-break: normal;
-    text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: normal;
+  text-overflow: ellipsis;
 }

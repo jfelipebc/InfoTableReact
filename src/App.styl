@@ -1,0 +1,89 @@
+.InfoTableReact-rowSelected
+    background #EBF5FF !important
+
+.InfoTableReact-container
+    height 100%
+    width 100%
+    left 0
+    right 0
+    box-sizing border-box
+
+.InfoTableReact
+    margin-bottom 0
+    border-spacing 0
+    background-color transparent
+    max-width 100%
+    thead
+        border-top 1px solid #ddd
+        border-bottom 1px solid #ddd
+        background white
+        padding-top 5px
+        min-height 48px
+        tr
+            th
+                color #6c6c6c
+                border-bottom none
+                text-align center
+                font-size 12px
+                font-weight bold
+                vertical-align top
+                padding 5px
+            th[data-sort="true"]:hover
+                cursor pointer
+                transition all .5s ease-in
+        th
+            &::after
+                margin-left 2px
+                font-family FontAwesome
+                content "\f0d8 \f0d7"
+                color #212121
+                opacity 0
+        th[data-sort-column=""][data-sort="true"]:hover
+            &::after
+                opacity 1
+                transition opacity .3s
+    tbody
+        overflow auto
+        border-bottom 1px solid #ddd
+        td
+            box-sizing border-box
+            display inline-block
+            height 100%
+            padding 5px
+            text-align left
+        tr
+            border-bottom 1px solid #ddd
+            display block
+            &:hover
+                cursor pointer
+            td
+                border-top none
+    tfoot
+        display block
+        height 64px
+        .pagination
+            margin 10px 0
+        tr
+            td
+                border-top none
+
+.InfoTableReact thead th,
+.InfoTableReact tbody td
+    word-wrap break-word
+
+.InfoTableReact-fixed
+    table-layout fixed
+    border-collapse collapse
+    display block
+    width 100%
+    tbody
+        overflow auto
+
+.InfoTableReact-fixed thead,
+.InfoTableReact-fixed tbody
+    display block
+
+.InfoTableReact-ellipsis
+    overflow hidden
+    word-break normal
+    text-overflow ellipsis
