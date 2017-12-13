@@ -4,11 +4,24 @@ import Columns from './Columns';
 import InfoTableFooter from './InfoTableFooter';
 import InfoTableHeader from './InfoTableHeader';
 import Rows from './Rows';
+import { SYMBOLS, ORDER } from './helpers/constants';
 
-const SYMBOLS = {
-    PERCENTAGE: '%',
-    PIXEL: 'px'
-};
+const compare = (key, order = ORDER.ASCENDING) => (a, b) => {
+    if (!{}.hasOwnProperty.call(a, key) || !{}.hasOwnProperty.call(b, key)) {
+        return 0;
+    }
+
+    const valueA = a[key].toString().localeCompare(b[key].toString());
+    const valueB = b[key].toString().localeCompare(a[key].toString());
+    let comparison = 0;
+    if (valueA > valueB) {
+        comparison = 1;
+    } else if (valueA < valueB) {
+        comparison = -1;
+    }
+    return order === ORDER.DESCENDING ? (comparison * -1) : comparison;
+}
+
 class InfoTableReact extends React.Component {
     constructor(props) {
         super(props);
@@ -46,25 +59,8 @@ class InfoTableReact extends React.Component {
         if (!sortColumn || sortColumn === "") {
             return data;
         }
-        const dataSorting = data.sort((a, b) => {
-            if (sortDirection === "ASC") {
-                let num = a[sortColumn]
-                    .toString()
-                    .localeCompare(b[sortColumn].toString());
 
-                if (num > 0) return 1;
-                if (num < 0) return -1;
-            }
-            
-            let num = b[sortColumn]
-                .toString()
-                .localeCompare(a[sortColumn].toString());
-
-            if (num > 0) return 1;
-            if (num < 0) return -1;
-            return -1
-        });
-        return dataSorting;
+        return data.sort(compare(sortColumn, sortDirection));
     }
 
     patternMatch(text, data){

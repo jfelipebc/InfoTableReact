@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import * as data from './data/MOCK_DATA';
 import InfoTable from './components/InfoTableReact';
-
+window.data = data;
 const columns = [
     {
         displayName: 'Acciones',
@@ -26,6 +26,7 @@ const columns = [
     {
         columnName: 'firstName',
         displayName: 'Nombre',
+        isSorting: true,
         render: (props, column, indexColumn, value) => {
             return (<a onClick={(e => console.log(e, value))}>{value}</a>);
         }
@@ -87,6 +88,7 @@ const columns = [
     {
         columnName: 'lat',
         displayName: 'Latitud',
+        isSorting: true,
     },
     {
         columnName: 'lon',
@@ -146,6 +148,8 @@ class App extends Component {
                     {...this.state.tableConfig}
                     ref={node => this.infotable = node }
                     container="#TableContainer"
+                    showHeader
+                    showListColumns
                     tableHeight={this.state.containerHeight}
                 />
             </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import InfoTableRow from '../InfoTableRow';
 
-class Rows extends React.Component {
+class Rows extends React.PureComponent {
     getRows() {
         const {
             data,

@@ -11,7 +11,7 @@ const getSortIcon = direction => {
     }
 };
 
-class Columns extends React.Component {
+class Columns extends React.PureComponent {
     constructor(...args) {
         super(...args);
         this.onHandleSortClick = this.onHandleSortClick.bind(this);
