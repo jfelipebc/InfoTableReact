@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import * as data from './data/MOCK_DATA';
 import InfoTable from './components/InfoTableReact';
-window.data = data;
+
 const columns = [
     {
         displayName: 'Acciones',
@@ -21,11 +21,13 @@ const columns = [
     },
     {
         columnName: 'id',
-        displayName: 'Identificador'
+        displayName: 'Identificador',
+        type: 'string'
     },
     {
         columnName: 'firstName',
         displayName: 'Nombre',
+        type: 'string',
         isSorting: true,
         render: (props, column, indexColumn, value) => {
             return (<a onClick={(e => console.log(e, value))}>{value}</a>);
@@ -33,31 +35,38 @@ const columns = [
     },
     {
         columnName: 'lastName',
-        displayName: 'Apellido'
+        displayName: 'Apellido',
+        type: 'string'
     },
     {
         columnName: 'email',
-        displayName: 'Correo electrónico'
+        displayName: 'Correo electrónico',
+        type: 'string'
     },
     {
         columnName: 'gender',
-        displayName: 'Sexo'
+        displayName: 'Sexo',
+        type: 'string'
     },
     {
         columnName: 'creditCard',
-        displayName: 'Tarjeta de crédito'
+        displayName: 'Tarjeta de crédito',
+        type: 'string'
     },
     {
         columnName: 'country',
-        displayName: 'País'
+        displayName: 'País',
+        type: 'string'
     },
     {
         columnName: 'random',
-        displayName: 'Number Aleatorio'
+        displayName: 'Number Aleatorio',
+        type: 'number'
     },
     {
         columnName: 'status',
         displayName: 'Estado',
+        type: 'string',
         render: (props, column, indexColumn, value) => {
             return (<span className='fa fa-warning' style={{ color: value }} />)
         }
@@ -66,6 +75,7 @@ const columns = [
         columnName: 'active',
         displayName: 'Activo',
         isSorting: true,
+        type: 'string',
         render: (props, column, indexColumn, value) => {
             return value ? 'Sí' : 'No';
         }
@@ -79,24 +89,29 @@ const columns = [
     },
     {
         columnName: 'isbn',
-        displayName: 'ISBN'
+        displayName: 'ISBN',
+        type: 'string'
     },
     {
         columnName: 'title',
-        displayName: 'Título'
+        displayName: 'Título',
+        type: 'string'
     },
     {
         columnName: 'lat',
         displayName: 'Latitud',
         isSorting: true,
+        type: 'number'
     },
     {
         columnName: 'lon',
         displayName: 'Longitud',
+        type: 'number'
     },
     {
         columnName: 'token',
         displayName: 'Token',
+        type: 'string'
     }
 ]
 
@@ -148,8 +163,9 @@ class App extends Component {
                     {...this.state.tableConfig}
                     ref={node => this.infotable = node }
                     container="#TableContainer"
-                    showHeader
-                    showListColumns
+                    showFooter
+                    showPagination
+                    itemsPerPage={100}
                     tableHeight={this.state.containerHeight}
                 />
             </div>

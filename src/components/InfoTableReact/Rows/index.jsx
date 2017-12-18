@@ -2,26 +2,28 @@ import React from 'react';
 import InfoTableRow from '../InfoTableRow';
 
 class Rows extends React.PureComponent {
-    getRows() {
+    render() {
         const {
             data,
             rowSelected, 
             rowSelectedClassName,
+            onRowClick,
+            rowWidth,
+            columns
         } = this.props;
 
         return data.map((row, rowIndex) => {
             const rowSelect = (rowSelected.rowIndex === rowIndex) ? rowSelectedClassName : '';
             return <InfoTableRow
-                {...this.props}
-                rowIndex={rowIndex}
-                row={row}
                 key={rowIndex}
                 rowSelectedClass={rowSelect}
+                columns={columns}
+                row={row}
+                rowIndex={rowIndex}
+                rowWidth={rowWidth}
+                onRowClick={onRowClick}
             />
         });
-    }
-    render() {
-        return this.getRows();
     }
 }
 

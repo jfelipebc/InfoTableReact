@@ -1,4 +1,5 @@
 import React from 'react';
+import { ORDER, TYPE } from '../helpers/constants';
 
 const getSortIcon = direction => {
     switch (direction) {
@@ -11,64 +12,69 @@ const getSortIcon = direction => {
     }
 };
 
+const Column = ({ column, columnIndex, sortColumn, sortDirection, id}) => {
+    const SortIcon = column.columnName === sortColumn ? getSortIcon(sortDirection) : null;
+    return (
+        <th
+            style={{ width: column.columnWidth }}
+            key={id}
+            data-sort-column={sortColumn || ""}
+            data-sort={column.isSorting || false}
+        >
+            {column.displayName} {SortIcon}
+        </th>
+    )
+}
+
 class Columns extends React.PureComponent {
     constructor(...args) {
         super(...args);
-        this.onHandleSortClick = this.onHandleSortClick.bind(this);
+        this.handleSortChange = this.handleSortChange.bind(this);
     }
 
-    getColumns(columns) {
-        if (columns && columns.length === 0) return null;
-    
-        return columns.map((column, indexColumn) => {
-            let sortIcon = null;
-            if (column.isSorting && column.columnName === this.props.sortColumn) {
-            sortIcon = getSortIcon(this.props.sortDirection);
-            }
-            return (
-            <th
-                style={{ width: column.columnWidth }}
-                key={`${column}$$${indexColumn}`}
-                data-sort-column={this.props.sortColumn || ""}
-                data-sort={column.isSorting || false}
-                ref={column}
-                onClick={event =>
-                column.isSorting
-                    ? this.onHandleSortClick(event, column, indexColumn)
-                    : null}
-            >
-                {column.displayName} {sortIcon}
-            </th>
-            );
-        });
-    }
+    handleSortChange = (e) => {
+        e.preventDefault();
+        const cellIndex = e.target.cellIndex;
+        const { onCustomSort, onChangeGrid, columns, sortColumn, sortDirection } = this.props;
+        const column = columns[cellIndex];
+        if (column && !column.isSorting) return;
 
-    onHandleSortClick(event, column, indexColumn) {
-        let sortDirection = null;
-        if (column.columnName === this.props.sortColumn) {
-            if (this.props.sortDirection === "ASC") {
-                sortDirection = "DESC";
-            } else {
-                sortDirection = "ASC";
-            }
-        } else {
-            sortDirection = "ASC";
-        }
+        const direction = (column.columnName === sortColumn)
+            ?   (sortDirection === ORDER.ASCENDING) ? ORDER.DESCENDING : ORDER.ASCENDING 
+            :   ORDER.ASCENDING;
 
-        if (this.props.onCustomSort) {
-            this.props.onCustomSort(event, sortDirection, column.columnName, indexColumn);
+        if (onCustomSort && typeof onCustomSort === 'function') {
+            onCustomSort(e, direction, column, cellIndex);
         } else {
-            this.props.onChangeGrid(event, {
+            onChangeGrid(e, {
                 sortColumn: column.columnName,
-                sortDirection
+                sortColumnType: column.type || TYPE.STRING, 
+                sortDirection: direction
             });
         }
-    
     }
 
     render() {
-        const columns = this.getColumns(this.props.columns);
-        return (<tr style={{ width: this.props.rowWidth }}>{columns}</tr>);
+        const { sortColumn, sortDirection } = this.props;
+        const columns = this.props.columns.slice();
+        if (columns && columns.length === 0) return null;
+
+        return (
+            <tr 
+                style={{ width: this.props.rowWidth }}
+                onClick={this.handleSortChange}>
+                {
+                    columns.map((columnItem, columnIndex) =>
+                        <Column
+                            column={columnItem}
+                            columnIndex={columnIndex}
+                            key={columnIndex}
+                            sortColumn={sortColumn}
+                            sortDirection={sortDirection}
+                        />
+                    )
+                }
+            </tr>);
     }
 }
 

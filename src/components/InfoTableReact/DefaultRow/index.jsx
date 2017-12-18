@@ -9,7 +9,7 @@ const Cell = ({columnIndex, cellTooltip, columnWidth, children, align }) =>
         {children}
     </td>);
 
-class DefaultRow extends React.Component {
+class DefaultRow extends React.PureComponent {
     constructor(...args) {
         super(...args);
 
@@ -22,7 +22,7 @@ class DefaultRow extends React.Component {
         }
     }
 
-    getCells(row, columns) {
+    getCells(row, rowIndex, columns) {
         return columns
             .map((column, columnIndex) => {
                 let dataValue = row[column.columnName];
@@ -47,7 +47,7 @@ class DefaultRow extends React.Component {
 
                     return (
                         <Cell
-                            key={`${column.columnName}'$$'${columnIndex}`}
+                            key={`R${rowIndex}_C${columnIndex}`}
                             columnIndex={columnIndex}
                             cellTooltip={cellTooltip}
                             columnWidth={column.columnWidth}
@@ -68,7 +68,7 @@ class DefaultRow extends React.Component {
                 style={{ width: rowWidth }}
             >
                 {
-                    this.getCells(row, columns)
+                    this.getCells(row, rowIndex, columns)
                 }
             </tr>
         );

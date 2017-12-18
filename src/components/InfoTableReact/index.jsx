@@ -1,28 +1,41 @@
 import React from 'react';
 import $ from 'jquery';
+import _ from 'underscore';
 import Columns from './Columns';
 import InfoTableFooter from './InfoTableFooter';
 import InfoTableHeader from './InfoTableHeader';
 import Rows from './Rows';
-import { SYMBOLS, ORDER } from './helpers/constants';
+import { SYMBOLS, ORDER, TYPE } from './helpers/constants';
 
-const compare = (key, order = ORDER.ASCENDING) => (a, b) => {
+const sortBy = (key, order = ORDER.ASCENDING, type = TYPE.STRING) => (a, b) => {
     if (!{}.hasOwnProperty.call(a, key) || !{}.hasOwnProperty.call(b, key)) {
         return 0;
     }
-
+    let comparison = 0;
+    if (type === TYPE.STRING) {
+        comparison = byString(a, b, key);
+    } else if (type === TYPE.NUMBER) {
+        comparison = byNumber(a, b, key);
+    } else if (type === TYPE.DATE) {
+        comparison = byDate(a, b, key);
+    }
+    return order === ORDER.ASCENDING ? comparison : (comparison * -1);
+}
+const byString = (a, b, key, order) => {
     const valueA = a[key].toString().localeCompare(b[key].toString());
     const valueB = b[key].toString().localeCompare(a[key].toString());
-    let comparison = 0;
     if (valueA > valueB) {
-        comparison = 1;
+        return 1;
     } else if (valueA < valueB) {
-        comparison = -1;
+        return -1;
     }
-    return order === ORDER.DESCENDING ? (comparison * -1) : comparison;
-}
 
-class InfoTableReact extends React.Component {
+    return 0;
+};
+const byNumber = (a, b, key) => a[key] - b[key];
+const byDate = (a, b, key) => new Date(a[key]) - new Date(b[key]);
+
+class InfoTableReact extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -35,18 +48,12 @@ class InfoTableReact extends React.Component {
         }
     }
 
-    componentDidMount() {
-        if (this.props.tableHeight) {
-            $(this.body).height(this.props.tableHeight);
-        }
-        const { newColumns, width }= this.redraw(this.props.columns.slice());
-        this.setState({ columns: newColumns, rowWidth: width });
-    }
-
     componentWillReceiveProps(nextProps) {
         if (nextProps.columns && nextProps.columns.length > 0) {
-            const { newColumns, width } = this.redraw(nextProps.columns.slice());
-            this.setState({ columns: newColumns, rowWidth: width });
+            if (!_.isEqual(this.props.columns, nextProps.columns) || nextProps.tableHeight !== this.props.tableHeight) {
+                const { newColumns, width } = this.redraw(nextProps.columns.slice());
+                this.setState({ columns: newColumns, rowWidth: width });
+            }
         }
 
         if (nextProps.tableHeight !== this.props.tableHeight) {
@@ -55,12 +62,11 @@ class InfoTableReact extends React.Component {
     }
 
     sortDataByColumn(data) {
-        const { sortColumn, sortDirection } = this.props;
+        const { sortColumn, sortDirection, sortColumnType } = this.props;
         if (!sortColumn || sortColumn === "") {
             return data;
         }
-
-        return data.sort(compare(sortColumn, sortDirection));
+        return data.sort(sortBy(sortColumn, sortDirection, sortColumnType));
     }
 
     patternMatch(text, data){
@@ -172,9 +178,12 @@ class InfoTableReact extends React.Component {
                         style={{ width: rowWidth}}
                     >
                         <Columns
-                            {...this.props}
-                            columns={columns}
+                            columns={columns || [] }
                             rowWidth={rowWidth}
+                            sortColumn={this.props.sortColumn}
+                            sortDirection={this.props.sortDirection}
+                            sortColumnType={this.props.sortColumnType}
+                            onChangeGrid={this.props.onChangeGrid}
                         />
                     </thead>
                     <tbody
@@ -184,7 +193,7 @@ class InfoTableReact extends React.Component {
                         <Rows 
                             {...this.props}
                             data={paginationData}
-                            columns={columns}
+                            columns={columns || []}
                             rowWidth={rowWidth}
                         />
                     </tbody>
