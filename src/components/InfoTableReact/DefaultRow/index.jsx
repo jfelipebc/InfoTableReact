@@ -60,18 +60,8 @@ class DefaultRow extends React.PureComponent {
     }
 
     render() {
-        const { columns, row, rowIndex, rowSelectedClass, rowWidth } = this.props;
-        return (
-            <tr 
-                onClick={event => this.onHandleRowClick(event, row, rowIndex)} 
-                className={rowSelectedClass}
-                style={{ width: rowWidth }}
-            >
-                {
-                    this.getCells(row, rowIndex, columns)
-                }
-            </tr>
-        );
+        const { columns, row, rowIndex, } = this.props;
+        return this.getCells(row, rowIndex, columns);
     }
 }
 

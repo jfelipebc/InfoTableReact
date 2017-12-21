@@ -1,21 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Checkbox = ({ customStyleCheckbox, value, label, onChange }) => 
-    <div className="checkbox">
+const Checkbox = ({ customStyleCheckbox, value, label, onChange, customClass, indeterminate }) => (
+    <div className="checkbox" style={customStyleCheckbox}>
         <label>
             <input
-                style={customStyleCheckbox}
                 type="checkbox"
                 checked={value}
                 onChange={(e) => onChange(e)}
+                ref={input => { if (input) input.indeterminate = indeterminate}}
             /> {label}
         </label>
     </div>
-
+);
+    
 
 Checkbox.defaultProps = {
-    label: 'label',
+    label: '',
     value: false,
     onChange: () => {},
 }

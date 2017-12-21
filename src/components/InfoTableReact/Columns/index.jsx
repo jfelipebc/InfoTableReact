@@ -1,5 +1,6 @@
 import React from 'react';
 import { ORDER, TYPE } from '../helpers/constants';
+import Checkbox from '../Checkbox';
 
 const getSortIcon = direction => {
     switch (direction) {
@@ -29,40 +30,55 @@ const Column = ({ column, columnIndex, sortColumn, sortDirection, id}) => {
 class Columns extends React.PureComponent {
     constructor(...args) {
         super(...args);
-        this.handleSortChange = this.handleSortChange.bind(this);
+        this.handleColumnClicked = this.handleColumnClicked.bind(this);
     }
 
-    handleSortChange = (e) => {
-        e.preventDefault();
-        const cellIndex = e.target.cellIndex;
-        const { onCustomSort, onChangeGrid, columns, sortColumn, sortDirection } = this.props;
-        const column = columns[cellIndex];
-        if (column && !column.isSorting) return;
-
-        const direction = (column.columnName === sortColumn)
-            ?   (sortDirection === ORDER.ASCENDING) ? ORDER.DESCENDING : ORDER.ASCENDING 
-            :   ORDER.ASCENDING;
-
-        if (onCustomSort && typeof onCustomSort === 'function') {
-            onCustomSort(e, direction, column, cellIndex);
-        } else {
-            onChangeGrid(e, {
-                sortColumn: column.columnName,
-                sortColumnType: column.type || TYPE.STRING, 
-                sortDirection: direction
-            });
+    handleColumnClicked = (e) => {
+        if (e.target.tagName === 'TH') {
+            const { onCustomSort, onChangeGrid, columns, sortColumn, sortDirection, showCheckbox } = this.props;
+            const cellIndex = showCheckbox ? e.target.cellIndex + 1: e.target.cellIndex;
+            const column = columns[cellIndex];
+            if (column && !column.isSorting) return;
+    
+            const direction = (column.columnName === sortColumn)
+                ?   (sortDirection === ORDER.ASCENDING) ? ORDER.DESCENDING : ORDER.ASCENDING 
+                :   ORDER.ASCENDING;
+    
+            if (onCustomSort && typeof onCustomSort === 'function') {
+                onCustomSort(e, direction, column, cellIndex);
+            } else {
+                onChangeGrid(e, {
+                    sortColumn: column.columnName,
+                    sortColumnType: column.type || TYPE.STRING, 
+                    sortDirection: direction
+                });
+            }
+        } else if(e.target.type === 'checkbox') {
+            this.props.onSelectAll(e);
         }
     }
 
     render() {
-        const { sortColumn, sortDirection } = this.props;
+        const { sortColumn, sortDirection, showCheckbox, isSelectAll } = this.props;
         const columns = this.props.columns.slice();
         if (columns && columns.length === 0) return null;
 
         return (
             <tr 
                 style={{ width: this.props.rowWidth }}
-                onClick={this.handleSortChange}>
+                onClick={this.handleColumnClicked}>
+                { showCheckbox ? 
+                    <th>
+                        <Checkbox customStyleCheckbox={{
+                                margin: '0 auto',
+                                width: '48px',
+                                textAlign: 'center' }}
+                            value={isSelectAll}
+                            indeterminate={isSelectAll === 'indeterminate'}
+                        />
+                    </th> 
+                    : null
+                }
                 {
                     columns.map((columnItem, columnIndex) =>
                         <Column

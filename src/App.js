@@ -111,7 +111,7 @@ const columns = [
     {
         columnName: 'token',
         displayName: 'Token',
-        type: 'string'
+        type: 'string',
     }
 ]
 
@@ -126,6 +126,7 @@ class App extends Component {
                 columns: columns,
                 tableClassName: "table table-condensed table-striped table-hover InfoTableReact",
                 onChangeGrid: this.onChangeGrid.bind(this),
+                selectedRows: []
             }
         };
 
@@ -147,7 +148,11 @@ class App extends Component {
         window.removeEventListener('resize', this.containerResized);
     }
     
-    
+    handleRowClick(e, row) {
+        this.setState({
+            tableConfig: Object.assign({}, { ...this.state.tableConfig }, { rowSelected: row })
+        });
+    }
 
     onChangeGrid(event, data) {
         const tableConfig = this.state.tableConfig;
@@ -165,6 +170,9 @@ class App extends Component {
                     container="#TableContainer"
                     showFooter
                     showPagination
+                    showHeader
+                    showFilter
+                    onRowClick={(e, row) => this.handleRowClick(e, row)}
                     itemsPerPage={100}
                     tableHeight={this.state.containerHeight}
                 />

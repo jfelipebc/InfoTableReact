@@ -1,19 +1,34 @@
 import React from 'react';
 import InfoTableRow from '../InfoTableRow';
-
 class Rows extends React.PureComponent {
+
+    getRowSelect(row, rows) {
+        if (this.props.showCheckbox) {
+            const rowIndex = rows.findIndex(rowItem => rowItem._index && rowItem._index === row._index);
+            if (rowIndex !== -1) {
+                return true;
+            }
+            return false;
+        } else {
+            return (this.props.rowSelected && this.props.rowSelected._index === row._index);
+        }
+    }
+
     render() {
         const {
             data,
-            rowSelected, 
             rowSelectedClassName,
             onRowClick,
             rowWidth,
-            columns
+            columns,
+            showCheckbox,
+            selectedRows,
         } = this.props;
 
         return data.map((row, rowIndex) => {
-            const rowSelect = (rowSelected.rowIndex === rowIndex) ? rowSelectedClassName : '';
+            const isSelect = this.getRowSelect(row, selectedRows);
+            const rowSelect = isSelect ? rowSelectedClassName : '';
+
             return <InfoTableRow
                 key={rowIndex}
                 rowSelectedClass={rowSelect}
@@ -22,6 +37,8 @@ class Rows extends React.PureComponent {
                 rowIndex={rowIndex}
                 rowWidth={rowWidth}
                 onRowClick={onRowClick}
+                showCheckbox={showCheckbox}
+                isSelect={isSelect}
             />
         });
     }
