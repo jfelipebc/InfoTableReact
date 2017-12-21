@@ -195,36 +195,5 @@ render: type: function([props, column, indexColumn, value]), default: null,
 formatter: type: function([props, column, indexColumn, value]), default: null,
 isKey: type: bool default: false */
 
-/* 
-InfoTable properties
-    columns: [],
-    customBulkActions: null,
-    customHeader: null,
-    customFilterComponent: null,
-    customPaginationComponent: null,
-    customRow: null,
-    data: [],
-    filterPlaceholder: 'Filtrar datos',
-    isHeaderFixed: true,
-    onChangeGrid: function([event, data]){},
-    onCustomClearFilter: function(event), default: null,
-    onCustomFilter: function([event, filterText]), default: null,
-    onCustomSort: function([event, sortDirection, columnName, columnIndex]), default: null,
-    onRowClick: function([event, row, rowIndex]) => {}, default: null
-    currentPage: 1, 
-    itemsPerPage: 10,
-    modalColumnsTitle: "Seleccione columnas",
-    rowSelected: {},
-    rowSelectedClassName: 'rowSelected',
-    showFilter: false,
-    showHeader: false,
-    showBulkActions: false,
-    showListColumns: false,
-    showPagination: false,
-    tableBodyClassName: '',
-    tableClassName: '',
-    tableHeaderClassName: '',
-    tableHeight: null,
-*/
 
 

@@ -23,6 +23,7 @@ class Rows extends React.PureComponent {
             columns,
             showCheckbox,
             selectedRows,
+            customRow,
         } = this.props;
 
         return data.map((row, rowIndex) => {
@@ -39,6 +40,7 @@ class Rows extends React.PureComponent {
                 onRowClick={onRowClick}
                 showCheckbox={showCheckbox}
                 isSelect={isSelect}
+                customRow={customRow}
             />
         });
     }
