@@ -82,6 +82,8 @@ class InfoTableReact extends React.PureComponent {
             showCheckbox,
             isSelectAll,
             selectedRows,
+            expandComponent,
+            expandableRow
         } = this.props;
         const { columns, rowWidth } = this.state;
 
@@ -134,6 +136,8 @@ class InfoTableReact extends React.PureComponent {
                             selectedRows={selectedRows}
                             onRowClick={this.handleSelectRow}
                             rowSelected={this.props.rowSelected}
+                            expandComponent={expandComponent}
+                            expandableRow={expandableRow}
                         />
                     </tbody>
                     {
@@ -233,6 +237,15 @@ class InfoTableReact extends React.PureComponent {
     getTableFooterHeight() {
         return this.props.showFooter && this.footer ? this.footer.clientHeight : 0;
     }
+    
+    generateIndexToData(currentData, nextData) {
+        const filterData = currentData.filter(item => ('_index' in item));
+        if (filterData.length > 0) {
+            return currentData;
+        } else {
+            return nextData.map(item => ({...item, _index: uuid.v4()}));
+        }
+    }
 
     handleSelectAll(e) {
         const selectedRows = e.target.checked ? this.state.data : [];
@@ -240,7 +253,7 @@ class InfoTableReact extends React.PureComponent {
     }
 
     handleSelectRow(e, row) {
-        if (this.props.showCheckbox) {
+        if (this.props.showCheckbox && e.target.type === 'checkbox') {
             const selectedRows = this.props.selectedRows.slice();
             if (e.target.checked) {
                 selectedRows.push(row);
@@ -250,23 +263,16 @@ class InfoTableReact extends React.PureComponent {
                 const rowIndex = selectedRows.findIndex(rowItem => rowItem._index === row._index);
                 if (rowIndex !== -1) {
                     selectedRows.splice(rowIndex, 1);
-                    this.props.onChangeGrid(e, { isSelectAll: 'indeterminate', selectedRows });
+                    const isSelectAll = selectedRows.length === 0 ? false : 'indeterminate';
+                    this.props.onChangeGrid(e, { isSelectAll, selectedRows });
                 }
             }
         } else {
             this.props.onRowClick && this.props.onRowClick(e, row);
         }
     }
-
-    generateIndexToData(currentData, nextData) {
-        const filterData = currentData.filter(item => ('_index' in item));
-        if (filterData.length > 0) {
-            return currentData;
-        } else {
-            return nextData.map(item => ({...item, _index: uuid.v4()}));
-        }
-    }
 }
+
 
 InfoTableReact.defaultProps = {
     columns: [],
@@ -276,6 +282,8 @@ InfoTableReact.defaultProps = {
     customPaginationComponent: null,
     customRow: null,
     data: [],
+    expandComponent: null,
+    expandableRow: null,
     filterPlaceholder: '',
     isHeaderFixed: true,
     onChangeGrid: () => {},

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 const Cell = ({columnIndex, cellTooltip, columnWidth, children, align }) => 
     (<td
         key={columnIndex}
@@ -10,18 +11,6 @@ const Cell = ({columnIndex, cellTooltip, columnWidth, children, align }) =>
     </td>);
 
 class DefaultRow extends React.PureComponent {
-    constructor(...args) {
-        super(...args);
-
-        this.onHandleRowClick = this.onHandleRowClick.bind(this);
-    }
-    
-    onHandleRowClick(event, row, rowId) {
-        if (event.target.tagName === 'TR' || event.target.tagName === 'TD') {
-            this.props.onRowClick(event, row, rowId);
-        }
-    }
-
     getCells(row, rowIndex, columns) {
         return columns
             .map((column, columnIndex) => {

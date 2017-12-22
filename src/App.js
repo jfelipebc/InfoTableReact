@@ -5,21 +5,6 @@ import InfoTable from './components/InfoTableReact';
 
 const columns = [
     {
-        displayName: 'Acciones',
-        render: () => {
-            return (<div>
-                <button
-                    type="button"
-                    className="btn btn-default btn-xs"
-                    data-target="#formModal"
-                    data-toggle="modal"
-                >
-                    <span className="fa fa-pencil" />
-                </button>
-            </div>)
-        }
-    },
-    {
         columnName: 'id',
         displayName: 'Identificador',
         type: 'string'
@@ -64,27 +49,12 @@ const columns = [
         type: 'number'
     },
     {
-        columnName: 'status',
-        displayName: 'Estado',
-        type: 'string',
-        render: (props, column, indexColumn, value) => {
-            return (<span className='fa fa-warning' style={{ color: value }} />)
-        }
-    },
-    {
         columnName: 'active',
         displayName: 'Activo',
         isSorting: true,
         type: 'string',
         render: (props, column, indexColumn, value) => {
             return value ? 'Sí' : 'No';
-        }
-    },
-    {
-        columnName: 'photo',
-        displayName: 'Icono',
-        render: (props, column, indexColumn, value) => {
-            return (<img src={value} alt="Icons" width='18px' height='18px' />)
         }
     },
     {
@@ -112,7 +82,28 @@ const columns = [
         columnName: 'token',
         displayName: 'Token',
         type: 'string',
+    },
+    {
+        columnName: 'id',
+        displayName: 'Identificador Externo',
+        type: 'string'
+    },
+    {
+        columnName: 'id',
+        displayName: 'Identificador Externo 2',
+        type: 'string'
+    },
+    {
+        columnName: 'id',
+        displayName: 'Identificador Externo',
+        type: 'string'
+    },
+    {
+        columnName: 'id',
+        displayName: 'Identificador Externo 2',
+        type: 'string'
     }
+
 ]
 
 class App extends Component {
@@ -170,8 +161,6 @@ class App extends Component {
                     container="#TableContainer"
                     showFooter
                     showPagination
-                    showHeader
-                    showFilter
                     onRowClick={(e, row) => this.handleRowClick(e, row)}
                     itemsPerPage={100}
                     tableHeight={this.state.containerHeight}
@@ -182,7 +171,6 @@ class App extends Component {
 }
 
 export default App;
-
 
 /* Column properties
 align: type: string default: 'center',

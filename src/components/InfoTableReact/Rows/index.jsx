@@ -1,5 +1,6 @@
 import React from 'react';
 import InfoTableRow from '../InfoTableRow';
+
 class Rows extends React.PureComponent {
 
     getRowSelect(row, rows) {
@@ -14,6 +15,10 @@ class Rows extends React.PureComponent {
         }
     }
 
+    handleRowClick(e, row, rowIndex) {
+
+    }
+
     render() {
         const {
             data,
@@ -24,24 +29,30 @@ class Rows extends React.PureComponent {
             showCheckbox,
             selectedRows,
             customRow,
+            expandComponent,
+            expandableRow,
         } = this.props;
 
         return data.map((row, rowIndex) => {
             const isSelect = this.getRowSelect(row, selectedRows);
             const rowSelect = isSelect ? rowSelectedClassName : '';
 
-            return <InfoTableRow
-                key={rowIndex}
-                rowSelectedClass={rowSelect}
-                columns={columns}
-                row={row}
-                rowIndex={rowIndex}
-                rowWidth={rowWidth}
-                onRowClick={onRowClick}
-                showCheckbox={showCheckbox}
-                isSelect={isSelect}
-                customRow={customRow}
-            />
+            return (
+                <InfoTableRow
+                    key={rowIndex}
+                    rowSelectedClass={rowSelect}
+                    columns={columns}
+                    row={row}
+                    rowIndex={rowIndex}
+                    rowWidth={rowWidth}
+                    onRowClick={onRowClick}
+                    showCheckbox={showCheckbox}
+                    isSelect={isSelect}
+                    customRow={customRow}
+                    expandComponent={expandComponent}
+                    expandableRow={expandableRow}
+                />
+            );
         });
     }
 }
